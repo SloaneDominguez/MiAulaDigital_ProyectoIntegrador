@@ -1,0 +1,387 @@
+/* ==========================================================================
+   MODALES GENERALES
+   ========================================================================== */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  width: 520px;
+  max-width: 100%;
+  padding: 24px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h2 {
+  margin: 0 0 20px;
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   FORMULARIOS
+   ========================================================================== */
+
+.modal-content label {
+  display: block;
+  margin: 12px 0 6px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  color: #334155;
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+}
+
+/* ==========================================================================
+   ACCIONES DEL MODAL
+   ========================================================================== */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Todos los botones del modal tendrán el mismo tamaño */
+
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary,
+.modal-actions .btn-danger {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 120px;
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  background: #b91c1c;
+  color: #fff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #991b1b;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  background: #64748b;
+  color: #fff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  background: #dc2626;
+  color: #fff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.btn-danger:hover {
+  background: #991b1b;
+}
+
+/* ==========================================================================
+   MODAL CERRAR SESIÓN
+   ========================================================================== */
+
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+
+  z-index: 9999;
+}
+
+.logout-overlay.active {
+  display: flex;
+}
+
+.logout-modal {
+  width: 430px;
+  max-width: calc(100% - 30px);
+
+  padding: 28px;
+
+  background: #fff;
+  border-radius: 18px;
+
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+
+  opacity: 0;
+  transform: scale(0.9);
+
+  transition: 0.25s ease;
+}
+
+.logout-modal.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.logout-modal-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 70px;
+  height: 70px;
+  margin: auto;
+
+  background: #fef2f2;
+  color: #dc2626;
+
+  border-radius: 50%;
+  font-size: 30px;
+}
+
+.logout-modal h3 {
+  margin: 18px 0 10px;
+  color: #0f172a;
+  font-size: 22px;
+  text-align: center;
+}
+
+.logout-modal p {
+  color: #64748b;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.logout-modal-actions .btn-primary,
+.logout-modal-actions .btn-secondary {
+  flex: 1;
+  height: 46px;
+}
+/* ==========================================================
+   RESPONSIVE MODALES
+========================================================== */
+
+@media (max-width: 768px){
+
+    .modal{
+        padding:16px;
+        align-items:flex-start;
+        overflow-y:auto;
+    }
+
+    .modal-content{
+        width:100%;
+        max-width:100%;
+        margin-top:25px;
+        padding:22px;
+        border-radius:14px;
+    }
+
+    .modal-content h2{
+        font-size:20px;
+    }
+
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea{
+        font-size:16px;
+        padding:12px;
+    }
+
+    .modal-actions{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .modal-actions .btn-primary,
+    .modal-actions .btn-secondary,
+    .modal-actions .btn-danger{
+        width:100%;
+        min-width:0;
+    }
+
+    .logout-modal{
+        width:100%;
+        max-width:100%;
+        padding:24px;
+        border-radius:16px;
+    }
+
+    .logout-modal-actions{
+        flex-direction:column;
+    }
+
+    .logout-modal-actions .btn-primary,
+    .logout-modal-actions .btn-secondary{
+        width:100%;
+    }
+
+}
+
+@media (max-width:480px){
+
+    .modal{
+        padding:10px;
+    }
+
+    .modal-content{
+        padding:18px;
+        margin-top:10px;
+    }
+
+    .modal-content h2{
+        font-size:18px;
+    }
+
+    .modal-content label{
+        font-size:13px;
+    }
+
+    .modal-content input,
+    .modal-content select,
+    .modal-content textarea{
+        font-size:16px;
+        padding:11px;
+    }
+
+    .modal-actions{
+        margin-top:18px;
+    }
+
+    .logout-modal{
+        padding:20px;
+    }
+
+    .logout-modal h3{
+        font-size:20px;
+    }
+
+    .logout-modal p{
+        font-size:14px;
+    }
+
+}
+
+@media (max-width:360px){
+
+    .modal-content{
+        padding:16px;
+    }
+
+    .logout-modal{
+        padding:18px;
+    }
+
+}

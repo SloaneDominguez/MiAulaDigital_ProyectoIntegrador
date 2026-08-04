@@ -1,0 +1,387 @@
+/* css/calificaciones.css */
+
+/* --- Contenedor Principal --- */
+.calificaciones-container {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    padding: 10px 20px;
+}
+
+/* --- Cabecera --- */
+.calif-header-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.calif-header-box h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 4px 0;
+}
+
+.calif-header-box p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* --- Botón Descargar y Dropdown --- */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-download {
+    background-color: #b61a1a;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-download:hover {
+    background-color: #9c1414;
+}
+
+.download-dropdown-menu {
+    display: none; 
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background: white;
+    min-width: 140px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+.download-dropdown-menu a {
+    color: #374151;
+    padding: 10px 14px;
+    text-decoration: none;
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.download-dropdown-menu a:hover {
+    background-color: #f9fafb;
+}
+
+/* --- Navegación de Bimestres --- */
+.bimestres-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.btn-bimestre {
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-bimestre.active {
+    background-color: #b61a1a;
+    color: #ffffff;
+}
+
+.btn-bimestre.inactive {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.btn-bimestre.inactive:hover {
+    background-color: #e5e7eb;
+}
+
+/* --- Contenedor de la Tabla --- */
+.table-calif-wrapper {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    overflow-x: auto;
+}
+
+.table-calif-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+.table-calif-wrapper thead tr {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-calif-wrapper th {
+    padding: 14px 18px;
+    font-weight: 600;
+    color: #4b5563;
+    white-space: normal; /* Permite que los nombres de los campos formativos largos den un salto de línea */
+    vertical-align: middle;
+}
+
+.table-calif-wrapper tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.table-calif-wrapper td {
+    padding: 14px 18px;
+    vertical-align: middle;
+}
+
+/* Elementos Internos de la Tabla */
+.badge-grupo {
+    background-color: #1f2937;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.student-name-cell {
+    color: #374151;
+    font-weight: 600;
+}
+
+.score-cell {
+    text-align: center;
+    font-weight: 700;
+}
+
+.average-cell {
+    text-align: center;
+    font-weight: 700;
+    color: #10b981;
+    font-size: 14px;
+}
+
+.empty-table-cell {
+    padding: 40px;
+    text-align: center;
+    color: #9ca3af;
+}
+
+
+/* ================= RESPONSIVE COMPLETO ================= */
+
+/* TABLETS Y LAPTOPS PEQUEÑAS */
+@media (max-width: 992px) {
+    .calificaciones-container {
+        padding: 10px 15px;
+    }
+
+    .calif-header-box {
+        gap: 16px;
+    }
+
+    .calif-header-box h1 {
+        font-size: 24px;
+    }
+
+    .table-calif-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-calif-wrapper table {
+        min-width: 900px;
+    }
+}
+
+/* CELULARES Y TABLETS PEQUEÑAS */
+@media (max-width: 768px) {
+    .calificaciones-container {
+        padding: 10px 12px;
+    }
+
+    .calif-header-box {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .calif-header-box h1 {
+        font-size: 22px;
+        line-height: 1.25;
+    }
+
+    .calif-header-box p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .dropdown-container {
+        width: 100%;
+    }
+
+    .btn-download {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .download-dropdown-menu {
+        width: 100%;
+        min-width: 100%;
+        top: 48px;
+    }
+
+    .bimestres-nav {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .btn-bimestre {
+        flex: 0 0 auto;
+        padding: 8px 16px;
+    }
+
+    .table-calif-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-calif-wrapper table {
+        width: 900px;
+        min-width: 900px;
+        white-space: nowrap;
+    }
+
+    .table-calif-wrapper th,
+    .table-calif-wrapper td {
+        padding: 12px 14px;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .table-calif-wrapper th {
+        white-space: normal;
+        min-width: 120px;
+    }
+
+    .student-name-cell {
+        min-width: 150px;
+        white-space: normal;
+        line-height: 1.4;
+    }
+
+    .badge-grupo {
+        font-size: 10px;
+        padding: 4px 7px;
+    }
+
+    .average-cell {
+        font-size: 13px;
+    }
+}
+
+/* CELULARES PEQUEÑOS */
+@media (max-width: 480px) {
+    .calificaciones-container {
+        padding: 8px;
+    }
+
+    .calif-header-box h1 {
+        font-size: 20px;
+    }
+
+    .calif-header-box p {
+        font-size: 12px;
+    }
+
+    .btn-download {
+        min-height: 42px;
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    .download-dropdown-menu a {
+        font-size: 12px;
+    }
+
+    .btn-bimestre {
+        padding: 7px 13px;
+        font-size: 12px;
+    }
+
+    .table-calif-wrapper table {
+        width: 850px;
+        min-width: 850px;
+    }
+
+    .table-calif-wrapper th,
+    .table-calif-wrapper td {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    .student-name-cell {
+        min-width: 135px;
+    }
+
+    .badge-grupo {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .average-cell {
+        font-size: 12px;
+    }
+
+    .empty-table-cell {
+        padding: 25px 15px;
+        font-size: 12px;
+    }
+}
+
+/* CELULARES MUY PEQUEÑOS */
+@media (max-width: 360px) {
+    .calif-header-box h1 {
+        font-size: 18px;
+    }
+
+    .btn-bimestre {
+        padding: 7px 11px;
+        font-size: 11px;
+    }
+
+    .table-calif-wrapper table {
+        width: 800px;
+        min-width: 800px;
+    }
+
+    .table-calif-wrapper th,
+    .table-calif-wrapper td {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+}

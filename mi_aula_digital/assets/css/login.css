@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ==========================
+   CONFIGURACIÓN GENERAL
+========================== */
+
+* {
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: #f8fafc;
+
+  padding: 20px;
+}
+
+/* ==========================
+   CONTENEDOR PRINCIPAL
+========================== */
+
+.login-container {
+  width: 100%;
+
+  max-width: 1000px;
+
+  min-height: 550px;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  background: white;
+
+  border-radius: 25px;
+
+  overflow: hidden;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================
+   PANEL LOGIN
+========================== */
+
+.login-box {
+  padding: 50px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+.login-header {
+  margin-bottom: 35px;
+}
+
+.login-header h1 {
+  font-size: 32px;
+
+  color: #b91c1c;
+
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: #64748b;
+
+  font-size: 15px;
+}
+
+/* ==========================
+   FORMULARIO
+========================== */
+
+.form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 14px;
+
+  font-weight: 500;
+
+  margin-bottom: 8px;
+
+  color: #334155;
+}
+
+.form-group input {
+  height: 45px;
+
+  border-radius: 10px;
+
+  border: 1px solid #cbd5e1;
+
+  padding: 0 15px;
+
+  outline: none;
+
+  font-size: 14px;
+
+  transition: 0.3s;
+}
+
+.form-group input:focus {
+  border-color: #dc2626;
+}
+
+/* ==========================
+   BOTÓN LOGIN
+========================== */
+
+.btn-login {
+  width: 100%;
+
+  height: 45px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #b91c1c;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.btn-login:hover {
+  background: #991b1b;
+}
+
+.login-footer {
+  margin-top: 25px;
+
+  text-align: center;
+}
+
+.login-footer a {
+  text-decoration: none;
+
+  color: #b91c1c;
+
+  font-size: 14px;
+}
+
+/* ==========================
+   PANEL ROLES
+========================== */
+
+.role-box {
+  background: linear-gradient(135deg, #991b1b, #dc2626);
+
+  padding: 50px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  color: white;
+}
+
+.role-header {
+  text-align: center;
+
+  margin-bottom: 35px;
+}
+
+.role-header h2 {
+  font-size: 28px;
+
+  margin-bottom: 10px;
+}
+
+.role-header p {
+  font-size: 14px;
+
+  opacity: 0.9;
+}
+
+/* ==========================
+   BOTONES DE ROL
+========================== */
+
+.role-buttons {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.role-btn {
+  width: 100%;
+
+  min-height: 40px;
+
+  border-radius: 15px;
+
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
+  background: rgba(255, 255, 255, 0.15);
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  transition: 0.3s;
+}
+
+.role-btn span i {
+  font-size: 15px;
+}
+
+.role-btn:hover {
+  background: white;
+
+  color: #b91c1c;
+
+  transform: translateY(-3px);
+}
+
+.role-btn.active {
+  background: white;
+
+  color: #b91c1c;
+
+  border-color: white;
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+#togglePassword {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #777;
+  font-size: 16px;
+  z-index: 2;
+}
+
+#togglePassword:hover {
+  color: #b30000;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width: 850px) {
+  .login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .role-box {
+    padding: 35px;
+
+    order: -1;
+  }
+
+  .login-box {
+    padding: 35px;
+  }
+}
+
+@media (max-width: 450px) {
+  body {
+    padding: 10px;
+  }
+
+  .login-container {
+    border-radius: 15px;
+  }
+
+  .login-header h1 {
+    font-size: 25px;
+  }
+
+  .role-header h2 {
+    font-size: 22px;
+  }
+}

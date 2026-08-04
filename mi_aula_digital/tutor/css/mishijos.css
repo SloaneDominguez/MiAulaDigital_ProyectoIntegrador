@@ -1,0 +1,497 @@
+/* css/mishijos.css */
+
+/* --- Estilos Generales y Contenedor Principal --- */
+.hijos-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.hijos-header-container h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 6px 0;
+}
+
+.hijos-header-container p {
+    font-size: 14px;
+    color: #707070;
+    margin: 0;
+}
+
+/* --- Botón Agregar Hijo --- */
+.btn-agregar-hijo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #b61a1a;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-agregar-hijo:hover {
+    background-color: #9c1414 !important;
+}
+
+/* --- Grid y Tarjetas de Alumnos --- */
+.hijos-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.replica-student-card {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+}
+
+.card-top-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card-avatar {
+    width: 48px;
+    height: 48px;
+    background-color: #fce8e6;
+    color: #b61a1a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.card-info h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222222;
+    margin: 0 0 3px 0;
+}
+
+.card-info p {
+    font-size: 13px;
+    color: #8c8c8c;
+    margin: 0;
+}
+
+.card-bottom-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f5f5f5;
+    padding-top: 12px;
+}
+
+.card-bottom-block .label-curp {
+    font-size: 12px;
+    color: #a0a0a0;
+    font-weight: 500;
+}
+
+.card-bottom-block .value-curp {
+    font-size: 12px;
+    color: #333333;
+    font-weight: 600;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+/* --- Estado Vacío --- */
+.hijos-empty-state {
+    grid-column: 1 / -1;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+}
+
+.hijos-empty-state p {
+    color: #707070;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* --- Modal de Vinculación --- */
+.modal-vinculacion-overlay {
+    display: none; /* Controlado por JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.modal-vinculacion-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 480px;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+#btnCloseAddModal {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #9c9c9c;
+    cursor: pointer;
+}
+
+.modal-vinculacion-card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    font-size: 14px;
+    color: #333333;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.modal-vinculacion-card input:focus {
+    border-color: #b61a1a !important;
+    background-color: #ffffff !important;
+}
+
+.btn-submit-modal {
+    background-color: #b61a1a;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+/* ================= RESPONSIVE COMPLETO ================= */
+
+/* TABLETS Y LAPTOPS PEQUEÑAS */
+@media (max-width: 992px) {
+    .hijos-header-container {
+        gap: 18px;
+    }
+
+    .hijos-header-container h1 {
+        font-size: 25px;
+    }
+
+    .hijos-header-container p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .hijos-grid-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .replica-student-card {
+        min-width: 0;
+    }
+
+    .modal-vinculacion-card {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* CELULARES Y TABLETS PEQUEÑAS */
+@media (max-width: 768px) {
+    .hijos-header-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .hijos-header-container h1 {
+        font-size: 22px;
+        line-height: 1.25;
+    }
+
+    .hijos-header-container p {
+        font-size: 13px;
+    }
+
+    .btn-agregar-hijo {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .hijos-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .replica-student-card {
+        width: 100%;
+        min-width: 0;
+        min-height: auto;
+        padding: 18px;
+        box-sizing: border-box;
+    }
+
+    .card-top-block {
+        min-width: 0;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .card-avatar {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        font-size: 16px;
+    }
+
+    .card-info {
+        min-width: 0;
+    }
+
+    .card-info h3,
+    .card-info p {
+        overflow-wrap: anywhere;
+    }
+
+    .card-bottom-block {
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .card-bottom-block .value-curp {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .hijos-empty-state {
+        padding: 30px 20px;
+    }
+
+    .modal-vinculacion-overlay {
+        padding: 15px;
+        align-items: flex-start;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    .modal-vinculacion-card {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .modal-vinculacion-card h2 {
+        padding-right: 30px;
+    }
+
+    .form-group input {
+        font-size: 16px;
+    }
+
+    .btn-submit-modal {
+        width: 100%;
+        min-height: 44px;
+    }
+}
+
+/* CELULARES PEQUEÑOS */
+@media (max-width: 480px) {
+    .hijos-header-container h1 {
+        font-size: 20px;
+    }
+
+    .hijos-header-container p {
+        font-size: 12px;
+    }
+
+    .btn-agregar-hijo {
+        min-height: 42px;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .replica-student-card {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .card-top-block {
+        gap: 10px;
+    }
+
+    .card-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 15px;
+    }
+
+    .card-info h3 {
+        font-size: 14px;
+    }
+
+    .card-info p {
+        font-size: 12px;
+    }
+
+    .card-bottom-block {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-bottom-block .label-curp,
+    .card-bottom-block .value-curp {
+        font-size: 11px;
+    }
+
+    .hijos-empty-state {
+        padding: 24px 15px;
+        border-radius: 10px;
+    }
+
+    .hijos-empty-state p {
+        font-size: 12px;
+    }
+
+    .modal-vinculacion-card {
+        padding: 16px;
+        border-radius: 10px;
+    }
+
+    #btnCloseAddModal {
+        top: 14px;
+        right: 14px;
+    }
+
+    .modal-vinculacion-card h2 {
+        font-size: 17px;
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group input {
+        padding: 11px 12px;
+        font-size: 16px;
+    }
+
+    .btn-submit-modal {
+        font-size: 13px;
+    }
+}
+
+/* CELULARES MUY PEQUEÑOS */
+@media (max-width: 360px) {
+    .hijos-header-container h1 {
+        font-size: 18px;
+    }
+
+    .replica-student-card {
+        padding: 12px;
+    }
+
+    .card-top-block {
+        align-items: flex-start;
+    }
+
+    .modal-vinculacion-card {
+        padding: 13px;
+    }
+
+    .modal-vinculacion-card h2 {
+        font-size: 16px;
+    }
+}
+
+/* Correcciones funcionales y visuales de Mis hijos */
+.hijos-alert{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:12px 14px;border-radius:10px;font-size:14px;font-weight:600}.hijos-alert.is-success{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}.hijos-alert.is-error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.replica-student-card{transition:transform .2s,box-shadow .2s,border-color .2s}.replica-student-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.07)}
+.btn-seleccionar-hijo{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.modal-vinculacion-overlay{padding:16px;overflow-y:auto}.modal-vinculacion-card{max-height:calc(100dvh - 32px);overflow-y:auto}.modal-form input{text-transform:none}.modal-form input[name="curp_alumno"]{text-transform:uppercase}
+@media(max-width:768px){.hijos-grid-layout{grid-template-columns:1fr}.card-bottom-block{flex-direction:column!important;align-items:flex-start!important;gap:12px}.btn-seleccionar-hijo{width:100%;justify-content:center;padding:10px 12px!important}.modal-vinculacion-overlay{align-items:flex-start}.modal-vinculacion-card{margin:16px 0}}
+
+/* ========================================================================== 
+   MEJORAS FUNCIONALES Y RESPONSIVAS — MIS HIJOS
+   ========================================================================== */
+.hijos-alert{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:12px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.hijos-alert.is-success{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}.hijos-alert.is-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.replica-student-card.is-active{border:2px solid #b61a1a;box-shadow:0 5px 18px rgba(182,26,26,.12)}
+.replica-student-card.is-active .card-avatar{background:#b61a1a;color:#fff}
+.active-student-badge{display:inline-block;margin-top:5px;padding:3px 8px;border-radius:999px;background:#fef2f2;color:#b61a1a;font-size:10px;font-weight:700}
+.student-summary{display:grid;grid-template-columns:1.6fr .7fr .7fr;gap:10px;margin:0;padding:13px 0;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9}
+.student-summary div{min-width:0}.student-summary dt{margin-bottom:4px;color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.student-summary dd{margin:0;color:#334155;font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.card-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-ver-hijo,.btn-seleccionar-hijo{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
+.btn-ver-hijo{background:#fff;border:1px solid #cbd5e1;color:#475569}.btn-ver-hijo:hover{background:#f8fafc}.btn-seleccionar-hijo{background:#b61a1a;border:1px solid #b61a1a;color:#fff}.btn-seleccionar-hijo:hover{background:#9c1414}
+.hijos-empty-state i{display:block;margin-bottom:12px;color:#b61a1a;font-size:34px}.hijos-empty-state h3{margin:0 0 8px;color:#1e293b;font-size:17px}
+.modal-vinculacion-overlay{padding:18px;overflow-y:auto}.modal-vinculacion-card{max-height:calc(100dvh - 36px);overflow-y:auto}.modal-help-text{margin:-8px 0 18px;color:#64748b;font-size:13px;line-height:1.5}.form-group small{color:#94a3b8;font-size:11px}.btn-submit-modal{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.detail-student-modal{text-align:center}.detail-avatar{display:flex;align-items:center;justify-content:center;width:58px;height:58px;margin:0 auto 12px;border-radius:50%;background:#fef2f2;color:#b61a1a;font-size:24px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left}.detail-grid div{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.detail-grid div:first-child{grid-column:1/-1}.detail-grid span{display:block;margin-bottom:4px;color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase}.detail-grid strong{color:#334155;font-size:13px;overflow-wrap:anywhere}
+@media(max-width:768px){.hijos-grid-layout{grid-template-columns:1fr}.student-summary{grid-template-columns:1fr 1fr}.student-summary div:first-child{grid-column:1/-1}.card-actions{flex-direction:column}.btn-ver-hijo,.btn-seleccionar-hijo{width:100%}.detail-grid{grid-template-columns:1fr}.detail-grid div:first-child{grid-column:auto}}
+@media(max-width:480px){.student-summary{grid-template-columns:1fr}.student-summary div:first-child{grid-column:auto}.hijos-alert{font-size:12px}.modal-vinculacion-overlay{padding:10px}}
