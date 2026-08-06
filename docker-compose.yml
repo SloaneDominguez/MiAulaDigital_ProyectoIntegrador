@@ -1,0 +1,26 @@
+services:
+  app:
+    build: ./mi_aula_digital
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASS=secret
+      - DB_NAME=mi_aula_digital
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=mi_aula_digital
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mi_aula_digital/estructura.sql:/docker-entrypoint-initdb.d/estructura.sql
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:
