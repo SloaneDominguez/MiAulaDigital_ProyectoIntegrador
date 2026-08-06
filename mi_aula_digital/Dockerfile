@@ -14,6 +14,6 @@ RUN chown -R www-data:www-data /var/www/html \
 ENV DB_HOST=mysql \
     DB_USER=root \
     DB_PASS=secret \
-    DB_NAME=mi_aula_digital
+    DB_NAME=estructura.sql
 
 EXPOSE 80
