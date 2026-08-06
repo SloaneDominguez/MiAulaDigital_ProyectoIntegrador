@@ -297,3 +297,58 @@ CREATE TABLE `usuario` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-07-13  0:10:47
+
+-- ==========================================
+-- SEEDERS - USUARIOS
+-- ==========================================
+
+INSERT INTO usuario (ID_Usuario, Nombre, Usuario, Correo, Contrasena, Rol) VALUES
+(1, 'Director General', 'direccion1', 'direccion@escuela.local', 'Docente123', 'Direccion'),
+(2, 'Docente Principal', 'docente1', 'docente@escuela.local', 'Docente123', 'Docente'),
+(3, 'Padre/Tutor', 'LOPG850615MNLRRS08', 'tutor@escuela.local', '1-ERB-20260715-adb3', 'PadreTutor');
+
+-- ==========================================
+-- DIRECTOR
+-- ==========================================
+
+INSERT INTO director (ID_Director, ID_Usuario)
+VALUES
+(1,1);
+
+-- ==========================================
+-- DOCENTE
+-- ==========================================
+
+INSERT INTO docente (
+    ID_Docente,
+    Nombre,
+    Primer_Apellido,
+    Segundo_Apellido,
+    ID_Usuario,
+    ID_Grupo_Asignado
+) VALUES (
+    1,
+    'Docente',
+    'Principal',
+    '',
+    2,
+    NULL
+);
+
+-- ==========================================
+-- PADRE / TUTOR
+-- ==========================================
+
+INSERT INTO padre_tutor (
+    ID_Padre,
+    Nombre_Completo,
+    Correo,
+    Telefono,
+    ID_Usuario
+) VALUES (
+    1,
+    'Padre Tutor',
+    'tutor@escuela.local',
+    '0000000000',
+    3
+);
