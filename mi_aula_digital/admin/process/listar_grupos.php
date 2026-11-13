@@ -1,13 +1,8 @@
 <?php
-include_once("../../config/conexion.php");
-
-$sql = "SELECT ID_Grupo, Grado, Grupo FROM grupo";
-$res = $conexion->query($sql);
-$data = [];
-
-while($row = $res->fetch_assoc()){
-    $data[] = $row;
+require __DIR__.'/../../app/bootstrap.php';
+try {
+    requireUser(['Direccion']);
+    throw new DomainException('Esta ruta pertenece a una versión anterior de Mi Aula Digital. Usa el panel actual.',404);
+} catch (Throwable $ex) {
+    errorReply($ex);
 }
-
-echo json_encode($data);
-?>

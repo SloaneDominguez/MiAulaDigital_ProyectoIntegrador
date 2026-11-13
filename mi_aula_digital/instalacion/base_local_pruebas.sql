@@ -1,0 +1,1 @@
+-- Archivo sin uso. El sistema usa tu base real mi_aula_digital_nueva.

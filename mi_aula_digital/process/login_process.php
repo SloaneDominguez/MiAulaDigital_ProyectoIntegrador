@@ -1,103 +1,60 @@
 <?php
-session_start();
-header("Content-Type: application/json; charset=UTF-8");
-require_once("../config/conexion.php");
+require __DIR__.'/../app/bootstrap.php';
+try {
+    validateCsrf();
+    authEnsureSchema();
 
-// Validar método
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    echo json_encode(["success" => false, "message" => "Método no permitido."]);
-    exit();
-}
-
-// Datos recibidos
-$usuario = trim($_POST["usuario"] ?? "");
-$password = $_POST["password"] ?? "";
-$rol = trim($_POST["rol"] ?? "");
-if (empty($usuario) || empty($password) || empty($rol)) {
-    echo json_encode(["success" => false, "message" => "Todos los campos son obligatorios."]);
-    exit();
-}
-
-// Login general
-$sql = "SELECT ID_Usuario,Nombre,Usuario,Correo,Contrasena,Rol FROM usuario WHERE Usuario=?";
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param("s", $usuario);
-$stmt->execute();
-$resultado = $stmt->get_result();
-if ($resultado->num_rows === 0) {
-    echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrectos."]);
-    exit();
-}
-$datos = $resultado->fetch_assoc();
-if (!password_verify($password, $datos["Contrasena"])) {
-    echo json_encode(["success" => false, "message" => "Usuario o contraseña incorrectos."]);
-    exit();
-}
-if ($datos["Rol"] !== $rol) {
-    echo json_encode(["success" => false, "message" => "El usuario no pertenece al tipo seleccionado."]);
-    exit();
-}
-
-session_regenerate_id(true);
-$_SESSION["id_usuario"] = $datos["ID_Usuario"];
-$_SESSION["nombre"] = $datos["Nombre"];
-$_SESSION["usuario"] = $datos["Usuario"];
-$_SESSION["rol"] = $datos["Rol"];
-
-// Datos adicionales Docente
-if ($datos["Rol"] === "Docente") {
-    $sqlDocente = "SELECT ID_Docente,ID_Grupo_Asignado FROM docente WHERE ID_Usuario=? LIMIT 1";
-    $stmtDocente = $conexion->prepare($sqlDocente);
-    $stmtDocente->bind_param("i", $datos["ID_Usuario"]);
-    $stmtDocente->execute();
-    $resultadoDocente = $stmtDocente->get_result();
-    if ($resultadoDocente->num_rows === 0) {
-        echo json_encode(["success" => false, "message" => "El docente no tiene un registro asociado."]);
-        exit();
+    $active=currentUser();
+    if($active){
+        throw new DomainException(
+            'Ya hay una sesión activa en este navegador como '.($active['Nombre']??$active['Usuario']).'. Cierra esa sesión antes de entrar con otra cuenta. Para probar Director y Docente al mismo tiempo, usa otro navegador o una ventana de incógnito.',
+            409
+        );
     }
-    $docente = $resultadoDocente->fetch_assoc();
-    $_SESSION["id_docente"] = $docente["ID_Docente"];
-    $_SESSION["id_grupo"] = $docente["ID_Grupo_Asignado"];
-}
 
-// Datos adicionales Tutor
-if ($datos["Rol"] === "PadreTutor") {
-    $sqlTutor = "SELECT ID_Padre FROM padre_tutor WHERE ID_Usuario=? LIMIT 1";
-    $stmtTutor = $conexion->prepare($sqlTutor);
-    $stmtTutor->bind_param("i", $datos["ID_Usuario"]);
-    $stmtTutor->execute();
-    $resultadoTutor = $stmtTutor->get_result();
-    if ($resultadoTutor->num_rows === 0) {
-        echo json_encode(["success" => false, "message" => "El tutor no tiene un registro asociado."]);
-        exit();
+    $username=textInput('usuario',100);
+    $password=passwordInput('password',1,200);
+
+    // Solo los intentos fallidos cuentan para el bloqueo de acceso.
+    loginThrottleGuard('login',$username,10);
+    loginThrottleGuard('login-ip','',40);
+
+    $u=one('SELECT * FROM usuario WHERE (Usuario=? OR LOWER(Correo)=LOWER(?)) AND activo=1 LIMIT 1',[$username,$username]);
+    $hash=$u['Contrasena']??'$2y$10$7eqJtq98hPqEX7fNZaFWoOe5DUQqvZ5O5E8eF7Up9fPJ0fK4U8QYy';
+    $valid=password_verify($password,$hash);
+
+    if(!$u||!$valid){
+        loginThrottleFail('login',$username);
+        loginThrottleFail('login-ip','');
+        throw new DomainException('Usuario o contraseña incorrectos.',401);
     }
-    $tutor = $resultadoTutor->fetch_assoc();
-    $_SESSION["id_padre"] = $tutor["ID_Padre"];
+    if(!authAllowsLocal($u)){
+        throw new DomainException('Esta cuenta está configurada para iniciar con Google.',403);
+    }
+
+    profile($u); // No inicia una sesión sin perfil válido.
+    loginThrottleReset('login',$username);
+    loginThrottleReset('login-ip','');
+
+    $_SESSION=[];
+    session_regenerate_id(true);
+    $_SESSION['id_usuario']=(int)$u['ID_Usuario'];
+    $_SESSION['sesion_version']=(int)$u['sesion_version'];
+    $_SESSION['rol']=$u['Rol'];
+    $_SESSION['csrf']=bin2hex(random_bytes(32));
+    $_SESSION['last_activity']=time();
+
+    if(password_needs_rehash($u['Contrasena'],PASSWORD_DEFAULT)){
+        query('UPDATE usuario SET Contrasena=? WHERE ID_Usuario=?',[
+            password_hash($password,PASSWORD_DEFAULT),
+            (int)$u['ID_Usuario']
+        ]);
+    }
+
+    reply([
+        'ok'=>true,
+        'redirect'=>url($u['cambiar_clave']?'cuenta.php':homeFor($u))
+    ]);
+} catch(Throwable $ex) {
+    errorReply($ex);
 }
-
-// Redirecciones
-switch ($datos["Rol"]) {
-    case "Direccion":
-        $redirect = "admin/dashboard.php";
-        break;
-    case "Docente":
-        $redirect = "docente/dashboard.php";
-        break;
-    case "PadreTutor":
-        $redirect = "tutor/dashboard.php";
-        break;
-    default:
-        echo json_encode(["success" => false, "message" => "Rol inválido."]);
-        exit();
-}
-
-// Respuesta exitosa
-echo json_encode(["success" => true, "message" => "Bienvenido a Mi Aula Digital.", "redirect" => $redirect]);
-
-// Cerrar recursos
-if (isset($stmtDocente)) $stmtDocente->close();
-if (isset($stmtTutor)) $stmtTutor->close();
-$stmt->close();
-$conexion->close();
-exit();
-

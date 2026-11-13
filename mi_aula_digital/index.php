@@ -1,47 +1,19 @@
 <?php
-session_start();
-if(isset($_SESSION['id_usuario'],$_SESSION['rol'])){
-    switch($_SESSION['rol']){
-        case 'Direccion': header("Location: admin/dashboard.php"); exit();
-        case 'Docente': header("Location: docente/dashboard.php"); exit();
-        case 'PadreTutor': header("Location: tutor/dashboard.php"); exit();
-    }
-}
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Aula Digital | Login</title>
-    <link rel="stylesheet" href="assets/css/login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-</head>
-<body>
-    <div class="login-container">
-        <section class="login-box">
-            <div class="login-header"><h1>Mi Aula Digital</h1><p>Ingresa a tu cuenta</p></div>
-            <form id="loginForm" autocomplete="off">
-                <input type="hidden" name="rol" id="rolSeleccionado" value="">
-                <div class="form-group"><label id="labelUsuario">Usuario</label><input type="text" id="usuario" name="usuario" placeholder="Ingresa tu usuario" required></div>
-                <div class="form-group password-group">
-                    <label id="labelPassword">Contraseña</label>
-                    <div class="password-container"><input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required><i class="fa-solid fa-eye" id="togglePassword"></i></div>
-                </div>
-                <button type="submit" class="btn-login">Iniciar sesión</button>
-            </form>
-            <div class="login-footer"><div class="register-option" id="registerOption" style="display:none;"><a href="#" id="registerLink">¿No tienes cuenta? Regístrate aquí</a></div></div>
-        </section>
-        <section class="role-box">
-            <div class="role-header"><h2>Tipo de usuario</h2><p>Selecciona cómo ingresarás</p></div>
-            <div class="role-buttons">
-                <button type="button" class="role-btn" data-role="Direccion"><span><i class="fa-solid fa-school"></i></span>Dirección</button>
-                <button type="button" class="role-btn" data-role="Docente"><span><i class="fa-solid fa-chalkboard-user"></i></span>Docente</button>
-                <button type="button" class="role-btn" data-role="PadreTutor"><span><i class="fa-solid fa-users"></i></span>Padre / Tutor</button>
-            </div>
-        </section>
-    </div>
-    <script src="assets/js/custom_alert.js"></script>
-    <script src="assets/js/login.js"></script>
-</body>
-</html>
+require __DIR__.'/app/bootstrap.php';
+$activeUser=currentUser();
+if($activeUser) go($activeUser['cambiar_clave']?'cuenta.php':homeFor($activeUser));
+require __DIR__.'/app/ui.php';
+$branding=schoolBranding();
+authEnsureSchema();
+$googleReady=googleAuthConfigured();
+$googleState=is_string($_GET['google']??null)?$_GET['google']:'';
+$loginLines=preg_split('/\R/u',$branding['login_titulo'])?:[$branding['login_titulo']];
+head('Bienvenido'); ?>
+<main class="auth-shell"><section class="auth-story"><?php brand(); ?><?php if($branding['nombre_escuela']!==''): ?><div class="overline"><?=e($branding['nombre_escuela'])?></div><?php endif; ?><h1><?php foreach($loginLines as $i=>$line): $line=trim($line); if($line==='')continue; $last=$i===array_key_last($loginLines); ?><?=$last?'<span>'.e($line).'</span>':e($line)?><?=$last?'':'<br>'?><?php endforeach; ?></h1><p><?=e($branding['login_texto'])?></p><div class="auth-foot"><?=e($branding['login_roles'])?></div></section>
+<section class="auth-card glass" aria-labelledby="login-title"><div class="auth-icon"><?=icon('shield')?></div><h2 id="login-title"><?=e($branding['login_tarjeta_titulo'])?></h2><p><?=e($branding['login_tarjeta_texto'])?></p><?php if(($_GET['recuperada']??'')==='1'): ?><div class="feedback success auth-success" role="status"><strong>Contraseña actualizada.</strong><br>Ya puedes iniciar sesión con tu nueva contraseña.</div><?php endif; ?><?php if(($_GET['registro']??'')==='familia'): ?><div class="feedback success auth-success" role="status"><strong>Correo confirmado y cuenta creada.</strong><br>Inicia sesión y vincula a tu hijo con el código que te dé la escuela.</div><?php elseif(($_GET['registro']??'')==='docente'): ?><div class="feedback success auth-success" role="status"><strong>Correo confirmado. Solicitud enviada.</strong><br>Dirección revisará tu acceso. Te avisaremos por correo cuando sea aprobada; después podrás iniciar sesión aquí.</div><?php endif; ?><?php if(($_GET['sesion']??'')==='finalizada'): ?><div class="notice" role="alert"><strong>Tu sesión ya no está activa.</strong><br>Vuelve a iniciar sesión para continuar. Puede haber terminado por inactividad o por un cambio de acceso. Las calificaciones que guardaste siguen registradas.</div><?php endif; ?><form action="<?=e(url('process/login_process.php'))?>" method="post" data-api><?=csrf()?>
+<label class="field"><span>Usuario o correo</span><input name="usuario" autocomplete="username" maxlength="100" required placeholder="Tu usuario o correo electrónico"></label>
+<label class="field"><span>Contraseña</span><input name="password" type="password" autocomplete="current-password" maxlength="200" required placeholder="Tu contraseña"></label>
+<?php feedback(); ?><button type="submit" class="button primary">Iniciar sesión <?=icon('arrow')?></button></form>
+<?php if($googleState==='no_autorizado'): ?><div class="notice" role="alert"><strong>Cuenta de Google no autorizada.</strong><br>Dirección debe habilitar Google para tu cuenta antes de entrar.</div><?php elseif($googleState==='error'): ?><div class="notice" role="alert"><strong>No se pudo completar el acceso con Google.</strong><br>Inténtalo nuevamente o entra con tu usuario y contraseña.</div><?php elseif($googleState==='config'): ?><div class="notice" role="alert"><strong>Google todavía no está configurado.</strong><br>Dirección debe registrar las credenciales OAuth de esta instalación.</div><?php endif; ?>
+<?php if($googleReady): ?><div class="auth-divider"><span>o</span></div><a class="button google-button" href="<?=e(url('auth/google.php'))?>"><span class="google-g" aria-hidden="true">G</span>Continuar con Google</a><?php endif; ?>
+<div class="auth-links"><span class="auth-links-title">¿Todavía no tienes una cuenta?</span><div class="auth-link-grid"><a class="auth-link-button" href="<?=e(url('registro_tutor.php'))?>"><?=icon('users')?><span>Soy madre, padre o tutor</span></a><a class="auth-link-button" href="<?=e(url('registro_docente.php'))?>"><?=icon('book')?><span>Soy docente</span></a><a class="auth-link-button recovery" href="<?=e(url('recuperar.php'))?>"><?=icon('key')?><span>Recuperar contraseña</span></a></div></div></section></main><?php foot(); ?>

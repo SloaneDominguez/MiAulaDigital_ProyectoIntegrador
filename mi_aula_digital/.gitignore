@@ -1,0 +1,9 @@
+# Secretos: contraseñas de la base de datos, Google y Gmail. Nunca subirlos.
+config/database.local.php
+config/database.xampp.php
+.env
+
+# Respaldos locales y archivos temporales
+_respaldos/
+storage/tmp/*
+!storage/.htaccess
