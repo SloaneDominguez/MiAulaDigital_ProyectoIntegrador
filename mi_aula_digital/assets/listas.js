@@ -77,12 +77,27 @@ function showInvite(invite){
  <p class="help">La cuenta de <strong>${esc(invite.nombre)}</strong> está lista. Envíale este mensaje para que cree su contraseña. El enlace funciona una sola vez y vence el <strong>${esc(invite.vence)}</strong>.</p>
  <dl class="invite-data"><div><dt>Usuario</dt><dd>${esc(invite.usuario)}</dd></div><div><dt>Correo</dt><dd>${esc(invite.correo)}</dd></div></dl>
  <div class="invite-actions">
-  <a class="button primary" href="${esc(invite.mailto)}">Enviar por correo electrónico</a>
+  <button type="button" class="button primary" data-send-invite>Enviar por correo electrónico</button>
   <button type="button" class="button" data-copy-invite>Copiar mensaje</button>
  </div>
+ <div class="feedback" data-invite-status role="status" aria-live="polite" hidden></div>
  <label class="field"><span>Mensaje de la invitación</span><textarea readonly rows="7">${esc(invite.texto)}</textarea></label>
  <div class="form-footer"><button type="button" class="button" data-x>Listo</button></div>`;
  dlg.querySelectorAll('[data-x]').forEach(b=>b.addEventListener('click',()=>{dlg.close();location.reload();}));
+ // Envío real desde el servidor (Gmail SMTP). Antes era un enlace mailto: que solo abría el programa de correo.
+ const sendBtn=dlg.querySelector('[data-send-invite]'),status=dlg.querySelector('[data-invite-status]');
+ const showStatus=(text,ok)=>{status.textContent=text;status.classList.toggle('success',ok);status.hidden=false;};
+ sendBtn.addEventListener('click',async()=>{
+  const csrf=document.querySelector('input[name="csrf"]')?.value||'';
+  const body=new FormData();body.append('csrf',csrf);body.append('action','invite_email');body.append('usuario',String(invite.id||''));body.append('codigo',String(invite.codigo||''));
+  sendBtn.disabled=true;sendBtn.textContent='Enviando…';status.hidden=true;
+  try{
+   const r=await fetch(document.querySelector('form[action$="process/action.php"]')?.getAttribute('action')||'../process/action.php',{method:'POST',body,headers:{'Accept':'application/json'},credentials:'same-origin'});
+   const j=await r.json().catch(()=>({ok:false,message:'El servidor no respondió correctamente.'}));
+   if(!r.ok||!j.ok)throw new Error(j.message||'No se pudo enviar el correo.');
+   showStatus(j.message,true);sendBtn.textContent=j.sent?'Enviado ✓':'Enviar por correo electrónico';sendBtn.disabled=!!j.sent;
+  }catch(e){showStatus((e instanceof TypeError?'No se pudo conectar. Revisa tu conexión.':e.message)+' También puedes usar “Copiar mensaje”.',false);sendBtn.textContent='Reintentar envío';sendBtn.disabled=false;}
+ });
  dlg.querySelector('[data-copy-invite]').addEventListener('click',async e=>{try{await navigator.clipboard.writeText(invite.texto);e.target.textContent='¡Copiado!';}catch{dlg.querySelector('textarea').select();e.target.textContent='Selecciona y copia';}});
  document.querySelectorAll('dialog[open]').forEach(d=>{if(d!==dlg)d.close();});
  dlg.showModal();

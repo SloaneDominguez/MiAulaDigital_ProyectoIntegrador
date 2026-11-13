@@ -1,6 +1,6 @@
 <?php
 function extendedAction(array $u,array $p,string $action): ?array {
- $admin=['cycle_save','cycle_delete','cycle_transition','enroll_save','enroll_fix','mass_move','parent_register','invite_resend','data_repair','assignment_save','assignment_remove','family_add','family_remove','recovery_issue','recovery_reject','access_method_save','branding_save','branding_reset'];
+ $admin=['cycle_save','cycle_delete','cycle_transition','enroll_save','enroll_fix','mass_move','parent_register','invite_resend','invite_email','data_repair','assignment_save','assignment_remove','family_add','family_remove','recovery_issue','recovery_reject','access_method_save','branding_save','branding_reset'];
  $staff=['grade_batch','grade_save','incident_follow','incident_resolve'];
  if(!in_array($action,array_merge($admin,$staff,['notice_read','notice_confirm']),true))return null;
  if(in_array($action,$admin,true)&&$u['Rol']!=='Direccion')throw new DomainException('Solo Dirección puede realizar esta operación.',403);
@@ -214,6 +214,23 @@ function extendedAction(array $u,array $p,string $action): ?array {
    return issueInvitation($uid,$u);
   });
   $extra['invite']=$invite;$message='Padre/tutor registrado. Envíale la invitación para que cree su contraseña.';break;
+ case 'invite_email':
+  // Envía la invitación desde el servidor (Gmail SMTP). Antes era un enlace mailto:
+  // que solo abría el programa de correo de la computadora y no enviaba nada.
+  require_once __DIR__.'/mailer.php';
+  $userId=idInput('usuario');$token=textInput('codigo',64);
+  throttle('invite_email',(string)$userId,6);
+  $inv=findInvitation($token);
+  if(!$inv||(int)$inv['ID_Usuario']!==$userId||!(int)$inv['activo'])throw new DomainException('Esta invitación ya no es válida. Genera una nueva con “Reenviar invitación”.',410);
+  $target=one("SELECT u.ID_Usuario,u.Nombre,u.Usuario,u.Correo,u.Rol,p.Telefono FROM usuario u LEFT JOIN padre_tutor p ON p.ID_Usuario=u.ID_Usuario WHERE u.ID_Usuario=?",[$userId]);
+  if(!$target||$target['Rol']!=='PadreTutor')throw new DomainException('Solo se envían invitaciones a cuentas familiares.');
+  if(!filter_var((string)$target['Correo'],FILTER_VALIDATE_EMAIL))throw new DomainException('Esta cuenta no tiene un correo válido. Copia el mensaje y envíalo por otro medio.');
+  if(!mailAvailable())throw new DomainException('El envío de correos no está configurado. Usa “Copiar mensaje” y envíalo por WhatsApp o desde tu correo.',503);
+  $invite=invitationMessage($target,$token,(new DateTimeImmutable((string)$inv['vence']))->format('d/m/Y'));
+  $sent=sendInvitationEmail($invite);
+  audit($u,'ENVIAR_INVITACION','usuario',$userId,['correo'=>$target['Correo']]);
+  $message=$sent?'Invitación enviada a '.maskEmail((string)$target['Correo']).'.':'Modo de pruebas: no hay correo configurado en esta computadora; no se envió.';
+  $extra['sent']=$sent;break;
  case 'invite_resend':
   $userId=idInput('usuario');
   $target=one("SELECT Rol FROM usuario WHERE ID_Usuario=? AND activo=1",[$userId]);if(!$target||$target['Rol']!=='PadreTutor')throw new DomainException('Solo se envían invitaciones a cuentas familiares activas.');

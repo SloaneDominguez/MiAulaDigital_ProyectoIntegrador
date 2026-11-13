@@ -181,3 +181,19 @@ function notifyTeacherReview(array $request, bool $approved): void {
     ]);
     sendMail($email, $name, 'Revisión de tu solicitud en '.$body['system'], $body);
 }
+
+/**
+ * Envía la invitación de una cuenta familiar desde el servidor (Gmail SMTP).
+ * Devuelve true si se envió y false en modo de pruebas local (sin SMTP configurado).
+ * Lanza DomainException si el envío falla.
+ */
+function sendInvitationEmail(array $invite): bool {
+    $first = explode(' ', (string)$invite['nombre'])[0];
+    $body = mailTemplate('Crea tu contraseña', [
+        'Hola '.$first.':',
+        'Dirección de la escuela te registró para que consultes la información escolar de tu hijo o hija.',
+        'Tu usuario es: '.$invite['usuario'],
+        'Usa el botón para crear tu contraseña. El enlace funciona una sola vez y vence el '.$invite['vence'].'. Si no esperabas este mensaje, ignóralo.',
+    ], null, ['label' => 'Crear mi contraseña', 'url' => (string)$invite['enlace']]);
+    return sendMail((string)$invite['correo'], (string)$invite['nombre'], (string)($invite['asunto'] ?? 'Invitación a '.$body['system']), $body);
+}
