@@ -102,6 +102,9 @@ function invitationMessage(array $user, string $token, string $expires): array {
     $phone = preg_replace('/\D+/', '', (string)($user['Telefono'] ?? '')) ?? '';
     $subject = 'Invitación a '.$branding['nombre_sistema'];
     return [
+        'id' => (int)$user['ID_Usuario'],
+        'codigo' => $token,
+        'asunto' => $subject,
         'nombre' => $user['Nombre'],
         'usuario' => $user['Usuario'],
         'correo' => $user['Correo'],
@@ -109,7 +112,6 @@ function invitationMessage(array $user, string $token, string $expires): array {
         'vence' => $expires,
         'enlace' => $link,
         'texto' => $text,
-        'mailto' => 'mailto:'.rawurlencode((string)$user['Correo']).'?subject='.rawurlencode($subject).'&body='.rawurlencode($text),
     ];
 }
 

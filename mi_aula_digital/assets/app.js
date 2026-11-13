@@ -11,9 +11,13 @@ function notify(message,tone){
  toast.setAttribute('role',kind==='error'?'alert':'status');
  toast.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+(TOAST_ICONS[kind]||TOAST_ICONS.info)+'</svg><span></span><button type="button" class="toast-close" aria-label="Cerrar notificación"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button>';
  toast.querySelector('span').textContent=message;
- toast.querySelector('.toast-close').addEventListener('click',()=>{toast.hidden=true;clearTimeout(toastTimer);});
+ const hide=()=>{toast.hidden=true;try{if(toast.matches(':popover-open'))toast.hidePopover();}catch{}};
+ toast.querySelector('.toast-close').addEventListener('click',()=>{hide();clearTimeout(toastTimer);});
  toast.hidden=false;clearTimeout(toastTimer);
- toastTimer=setTimeout(()=>toast.hidden=true,kind==='error'?8000:4500);
+ // Capa superior: se ve arriba aunque haya una ventana (dialog) abierta.
+ if(typeof toast.showPopover==='function'){toast.setAttribute('popover','manual');try{if(toast.matches(':popover-open'))toast.hidePopover();toast.showPopover();}catch{}}
+ toast.classList.remove('toast--in');void toast.offsetWidth;toast.classList.add('toast--in');
+ toastTimer=setTimeout(hide,kind==='error'?8000:4500);
 }
 
 // Si el logo subido no carga (archivo borrado o no subido al hosting), se muestra la casita
@@ -101,6 +105,8 @@ const validationMessageFor=field=>{
 document.addEventListener('invalid',event=>{
  event.preventDefault();
  const field=event.target;if(!(field instanceof HTMLElement))return;
+ // El selector de alumno muestra su propio mensaje dentro del recuadro (assets/listas.js).
+ if(field.closest('.student-picker.is-enhanced'))return;
  const wrap=field.closest('.field');wrap?.classList.add('is-invalid');
  const clear=()=>wrap?.classList.remove('is-invalid');field.addEventListener('input',clear,{once:true});field.addEventListener('change',clear,{once:true});
  if(validationAlertPending)return;validationAlertPending=true;

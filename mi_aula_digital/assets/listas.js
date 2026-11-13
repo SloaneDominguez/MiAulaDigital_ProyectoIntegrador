@@ -46,26 +46,74 @@ function labelTable(table){
 
 /* ---------- 3. Listas desplegables con buscador ---------- */
 function setupOptionFilter(select){
- const master=[...select.options].map(o=>({value:o.value,text:o.text,key:o.dataset.grupo??'',selected:o.selected}));
+ const master=[...select.options].map(o=>({value:o.value,text:o.text,key:o.dataset.grupo??''}));
  const groupSel=document.querySelector(`[data-options-group="${select.id}"]`);
  const textIn=document.querySelector(`[data-options-text="${select.id}"]`);
  const info=document.querySelector(`[data-options-count="${select.id}"]`);
+ const picker=select.closest('[data-student-picker]');
+ const results=picker?.querySelector('[data-picker-results]');
+ const chosen=picker?.querySelector('[data-picker-chosen]'),filters=picker?.querySelector('[data-picker-filters]');
+ const LIMIT=40;
+ const split=text=>{const i=text.lastIndexOf(' · ');return i>0?[text.slice(0,i),text.slice(i+3)]:[text,''];};
+ const matches=()=>{const g=groupSel?.value??'';const t=norm(textIn?.value);return master.filter(o=>o.value!==''&&!(g!==''&&o.key!==g)&&!(t&&!norm(o.text).includes(t)));};
+ // Mantiene el <select> con las opciones filtradas (es el que se envía con el formulario).
  const rebuild=()=>{
-  const g=groupSel?.value??'';const t=norm(textIn?.value);const current=select.value;
-  select.innerHTML='';let n=0;
-  for(const o of master){
-   const placeholder=o.value==='';
-   if(!placeholder&&((g!==''&&o.key!==g)||(t&&!norm(o.text).includes(t))))continue;
-   const el=new Option(o.text,o.value);if(o.key)el.dataset.grupo=o.key;select.add(el);if(!placeholder)n++;
-  }
-  if(current!==''&&[...select.options].some(o=>o.value===current))select.value=current;
-  else if(n===1&&t)select.selectedIndex=[...select.options].findIndex(o=>o.value!=='');
-  else select.value='';
-  if(info)info.textContent=n?`${n} ${n===1?'opción':'opciones'}`:'Sin coincidencias';
+  const current=select.value;const list=matches();
+  select.innerHTML='';
+  for(const o of [master.find(m=>m.value==='')].filter(Boolean).concat(list)){const el=new Option(o.text,o.value);if(o.key)el.dataset.grupo=o.key;select.add(el);}
+  select.value=list.some(o=>o.value===current)?current:'';
+  render(list);
  };
- groupSel?.addEventListener('change',rebuild);textIn?.addEventListener('input',rebuild);
- select.form?.addEventListener('reset',()=>setTimeout(()=>{if(groupSel)groupSel.value='';if(textIn)textIn.value='';rebuild();}));
+ const render=list=>{
+  if(info){
+   info.classList.remove('is-error');
+   info.textContent=!list.length?'Sin coincidencias. Revisa el nombre o cambia el grupo.':list.length>LIMIT?`Mostrando ${LIMIT} de ${list.length}. Escribe para acotar.`:`${list.length} ${list.length===1?'resultado':'resultados'}`;
+  }
+  if(!results)return;
+  results.innerHTML='';
+  for(const o of list.slice(0,LIMIT)){
+   const [name,group]=split(o.text);
+   const b=document.createElement('button');b.type='button';b.className='picker-item';b.setAttribute('role','option');b.dataset.value=o.value;
+   b.setAttribute('aria-selected',String(o.value===select.value));
+   b.innerHTML='<span class="picker-avatar" aria-hidden="true"></span><span class="picker-item-name"></span><span class="picker-chip"></span>';
+   b.children[0].textContent=name.trim().charAt(0).toUpperCase();b.children[1].textContent=name;b.children[2].textContent=group;if(!group)b.children[2].remove();
+   results.append(b);
+  }
+  results.hidden=!list.length;
+ };
+ const collapse=on=>{
+  if(!chosen||!filters)return;
+  const opt=select.selectedOptions[0];const has=on&&select.value!==''&&opt;
+  if(has){const [name,group]=split(opt.text);chosen.querySelector('[data-picker-name]').textContent=name;chosen.querySelector('[data-picker-initial]').textContent=name.trim().charAt(0).toUpperCase();const chip=chosen.querySelector('[data-picker-group]');chip.textContent=group;chip.hidden=!group;}
+  chosen.hidden=!has;filters.hidden=!!has;picker.classList.toggle('is-chosen',!!has);picker.classList.remove('has-error');
+ };
+ const choose=value=>{select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));chosen?.querySelector('[data-picker-change]')?.focus();};
+ const clearError=()=>picker?.classList.remove('has-error');
+ groupSel?.addEventListener('change',()=>{clearError();rebuild();});textIn?.addEventListener('input',()=>{clearError();rebuild();});
+ if(picker&&results){
+  picker.classList.add('is-enhanced');
+  results.addEventListener('click',e=>{const it=e.target.closest('.picker-item');if(it)choose(it.dataset.value);});
+  // Teclado: flecha abajo desde el buscador entra a la lista; flechas para moverse; Enter elige.
+  textIn?.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();results.querySelector('.picker-item')?.focus();}else if(e.key==='Enter'){e.preventDefault();const items=results.querySelectorAll('.picker-item');if(items.length===1)choose(items[0].dataset.value);}});
+  results.addEventListener('keydown',e=>{const items=[...results.querySelectorAll('.picker-item')];const i=items.indexOf(document.activeElement);if(e.key==='ArrowDown'){e.preventDefault();items[Math.min(i+1,items.length-1)]?.focus();}else if(e.key==='ArrowUp'){e.preventDefault();(i<=0?textIn:items[i-1])?.focus();}});
+  // Sin alumno elegido: mensaje claro en lugar de la burbuja del navegador.
+  select.addEventListener('invalid',e=>{e.preventDefault();picker.classList.add('has-error');if(info){info.textContent='Elige un alumno de la lista para continuar.';info.classList.add('is-error');}textIn?.focus();});
+ }
+ select.addEventListener('change',()=>collapse(true));
+ chosen?.querySelector('[data-picker-change]')?.addEventListener('click',()=>{collapse(false);if(groupSel)groupSel.value='';if(textIn)textIn.value='';select.value='';rebuild();textIn?.focus();});
+ // Si el modal se abre con un alumno ya elegido (botón de una fila), se muestra contraído.
+ const dialog=select.closest('dialog');
+ if(dialog)document.querySelectorAll(`[data-open="${dialog.id}"]`).forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(textIn)textIn.value='';if(groupSel)groupSel.value='';const v=select.value;rebuild();select.value=v;collapse(select.value!=='');if(select.value==='')textIn?.focus();},0)));
+ // No se limpia select.value aquí: el formulario ya lo reinicia y el botón que abre el modal puede traer un alumno elegido.
+ select.form?.addEventListener('reset',()=>{
+  // Se restaura la lista completa de inmediato (antes de que el botón que abre el modal
+  // asigne el alumno de su fila); si quedara filtrada, ese alumno no existiría en la lista.
+  if(groupSel)groupSel.value='';if(textIn)textIn.value='';
+  select.innerHTML='';for(const o of master){const el=new Option(o.text,o.value);if(o.key)el.dataset.grupo=o.key;select.add(el);}
+  setTimeout(()=>{rebuild();collapse(select.value!=='');});
+ });
  rebuild();
+ if(select.value!=='')collapse(true);
 }
 
 /* ---------- 4. Invitaciones ---------- */
@@ -77,13 +125,33 @@ function showInvite(invite){
  <p class="help">La cuenta de <strong>${esc(invite.nombre)}</strong> está lista. Envíale este mensaje para que cree su contraseña. El enlace funciona una sola vez y vence el <strong>${esc(invite.vence)}</strong>.</p>
  <dl class="invite-data"><div><dt>Usuario</dt><dd>${esc(invite.usuario)}</dd></div><div><dt>Correo</dt><dd>${esc(invite.correo)}</dd></div></dl>
  <div class="invite-actions">
-  <a class="button primary" href="${esc(invite.mailto)}">Enviar por correo electrónico</a>
+  <button type="button" class="button primary" data-send-invite>Enviar por correo electrónico</button>
   <button type="button" class="button" data-copy-invite>Copiar mensaje</button>
  </div>
  <label class="field"><span>Mensaje de la invitación</span><textarea readonly rows="7">${esc(invite.texto)}</textarea></label>
  <div class="form-footer"><button type="button" class="button" data-x>Listo</button></div>`;
  dlg.querySelectorAll('[data-x]').forEach(b=>b.addEventListener('click',()=>{dlg.close();location.reload();}));
- dlg.querySelector('[data-copy-invite]').addEventListener('click',async e=>{try{await navigator.clipboard.writeText(invite.texto);e.target.textContent='¡Copiado!';}catch{dlg.querySelector('textarea').select();e.target.textContent='Selecciona y copia';}});
+ // Envío real desde el servidor (Gmail SMTP). Antes era un enlace mailto: que solo abría el programa de correo.
+ const sendBtn=dlg.querySelector('[data-send-invite]');
+ const toastMsg=(text,tone)=>{if(typeof notify==='function')notify(text,tone);else alert(text);};
+ sendBtn.addEventListener('click',async()=>{
+  const csrf=document.querySelector('input[name="csrf"]')?.value||'';
+  const body=new FormData();body.append('csrf',csrf);body.append('action','invite_email');body.append('usuario',String(invite.id||''));body.append('codigo',String(invite.codigo||''));
+  sendBtn.disabled=true;sendBtn.classList.add('is-loading');sendBtn.innerHTML='<span class="btn-spinner" aria-hidden="true"></span>Enviando…';
+  try{
+   const r=await fetch(document.querySelector('form[action$="process/action.php"]')?.getAttribute('action')||'../process/action.php',{method:'POST',body,headers:{'Accept':'application/json'},credentials:'same-origin'});
+   const j=await r.json().catch(()=>({ok:false,message:'El servidor no respondió correctamente.'}));
+   if(!r.ok||!j.ok)throw new Error(j.message||'No se pudo enviar el correo.');
+   toastMsg(j.message,j.sent?'success':'info');
+   sendBtn.classList.remove('is-loading');
+   if(j.sent){sendBtn.classList.add('is-done');sendBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>Correo enviado';}
+   else{sendBtn.disabled=false;sendBtn.textContent='Enviar por correo electrónico';}
+  }catch(e){
+   toastMsg((e instanceof TypeError?'No se pudo conectar. Revisa tu conexión.':e.message)+' Puedes usar “Copiar mensaje”.','error');
+   sendBtn.classList.remove('is-loading');sendBtn.disabled=false;sendBtn.textContent='Reintentar envío';
+  }
+ });
+ dlg.querySelector('[data-copy-invite]').addEventListener('click',async e=>{try{await navigator.clipboard.writeText(invite.texto);e.target.textContent='¡Copiado!';if(typeof notify==='function')notify('Mensaje copiado. Pégalo en WhatsApp o en tu correo.','success');}catch{dlg.querySelector('textarea').select();e.target.textContent='Selecciona y copia';}});
  document.querySelectorAll('dialog[open]').forEach(d=>{if(d!==dlg)d.close();});
  dlg.showModal();
 }
