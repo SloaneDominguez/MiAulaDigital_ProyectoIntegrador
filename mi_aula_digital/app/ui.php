@@ -622,13 +622,29 @@ function studentsWithGroup(): array
 function studentPicker(string $id, string $name = 'alumno', string $label = 'Alumno', bool $required = true, ?array $students = null): void
 {
     $students ??= studentsWithGroup();
-    echo '<div class="student-picker">';
-    echo '<label class="field"><span>1. Grupo</span><select data-options-group="'.e($id).'"><option value="">Todos los grupos</option>';
+    // Selector en dos estados:
+    //  - Búsqueda: grupo + buscador + lista de resultados clicables (la genera assets/listas.js).
+    //  - Elegido: tarjeta con el alumno y botón "Cambiar"; los filtros se ocultan.
+    // El <select> nativo se conserva (oculto con JS) para el envío del formulario y como respaldo sin JavaScript.
+    echo '<div class="student-picker" data-student-picker data-label="'.e($label).'">';
+    echo '<div class="picker-chosen" data-picker-chosen hidden>'
+        .'<span class="picker-avatar" aria-hidden="true" data-picker-initial></span>'
+        .'<span class="picker-chosen-text"><small>'.e($label).' seleccionado</small><strong data-picker-name></strong></span>'
+        .'<span class="picker-chip" data-picker-group></span>'
+        .'<button type="button" class="button small" data-picker-change>'.icon('edit').'Cambiar</button>'
+        .'</div>';
+    echo '<div class="picker-filters" data-picker-filters>';
+    echo '<div class="picker-bar">';
+    echo '<label class="field picker-group"><span>Grupo</span><select data-options-group="'.e($id).'"><option value="">Todos los grupos</option>';
     foreach (groupFilterOptions() as $gid => $text) echo '<option value="'.e($gid).'">'.e($text).'</option>';
     echo '</select></label>';
-    echo '<label class="field"><span>2. Buscar por nombre</span><input type="search" data-options-text="'.e($id).'" placeholder="Escribe el nombre o apellido" autocomplete="off"></label>';
-    echo '<label class="field picker-select"><span>'.e($label).' <small class="help" data-options-count="'.e($id).'"></small></span><select id="'.e($id).'" name="'.e($name).'" data-options-filterable'.($required ? ' required' : '').'>';
+    echo '<label class="field picker-search"><span>Buscar '.e(mb_strtolower($label)).'</span><span class="picker-search-box">'.icon('search').'<input type="search" data-options-text="'.e($id).'" placeholder="Escribe nombre o apellido" autocomplete="off" aria-controls="'.e($id).'-results"></span></label>';
+    echo '</div>';
+    echo '<div class="picker-results" id="'.e($id).'-results" data-picker-results role="listbox" aria-label="'.e($label).'" hidden></div>';
+    echo '<p class="picker-count" data-options-count="'.e($id).'" aria-live="polite"></p>';
+    echo '<label class="field picker-select"><span>'.e($label).'</span><select id="'.e($id).'" name="'.e($name).'" data-options-filterable'.($required ? ' required' : '').'>';
     echo '<option value="">'.($required ? 'Selecciona un alumno' : 'Ninguno por ahora').'</option>';
     foreach ($students as $s) echo '<option value="'.e($s['ID_Alumno']).'" data-grupo="'.e((string)($s['grupo_id'] ?? '')).'">'.e($s['nombre'].' · '.$s['grupo']).'</option>';
-    echo '</select></label></div>';
+    echo '</select></label>';
+    echo '</div></div>';
 }

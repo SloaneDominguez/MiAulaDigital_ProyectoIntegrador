@@ -438,3 +438,63 @@ body .field input[aria-invalid="true"]{border-color:<?=$danger?>!important;box-s
 /* Enlaces-botón de acceso y registro: superficie limpia, no gris */
 body .auth-link-button,body .auth-link-button.single,body .recovery-back{background:<?=$effSurface?>!important;border:1px solid <?=$lineMid?>!important}
 body .auth-link-button:hover,body .recovery-back:hover{background:<?=$softBg?>!important}
+/* Selector de alumno: alumno elegido en lugar de filtros */
+.picker-chosen{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:<?=$effSurface?>;border:1px solid <?=$lineSoft?>}
+.picker-chosen[hidden],.picker-filters[hidden]{display:none!important}
+.picker-chosen .avatar{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;font-weight:700}
+.picker-chosen-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.picker-chosen-text small{font-size:11px;color:<?=$surfaceMuted?>!important;text-transform:uppercase;letter-spacing:.05em}
+.picker-chosen-text strong{font-size:14px;overflow-wrap:anywhere}
+.picker-filters{display:contents}
+body .student-picker:has(> .picker-chosen:not([hidden])){padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+/* ---------- Notificación arriba (capa superior, encima de ventanas) ---------- */
+.toast,.toast:popover-open{position:fixed;inset:auto;top:20px;left:50%;right:auto;bottom:auto;transform:translateX(-50%);margin:0;border:0;width:max-content;max-width:min(460px,calc(100vw - 32px));padding:14px 12px 14px 16px;border-radius:14px;background:<?=$toastBg?>;color:#fff;overflow:visible;z-index:2147483000;animation:none}
+.toast.toast--in{animation:mad-toast-top .26s cubic-bezier(.2,.8,.2,1)}
+.toast[hidden]{display:none!important}
+@keyframes mad-toast-top{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:760px){.toast,.toast:popover-open{top:calc(12px + env(safe-area-inset-top));left:12px;right:12px;bottom:auto;transform:none;width:auto;max-width:none}@keyframes mad-toast-top{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}}
+@media(prefers-reduced-motion:reduce){.toast.toast--in{animation:none}}
+/* ---------- Selector de alumno v2 ---------- */
+body .student-picker{display:block!important;padding:14px!important;border:1px solid <?=$lineSoft?>!important;border-radius:16px!important;background:<?=$listPanel?>!important;box-shadow:none!important}
+body .student-picker.is-chosen{padding:0!important;border:0!important;background:transparent!important}
+body .student-picker.has-error{border-color:<?=$danger?>!important;box-shadow:0 0 0 3px <?=brandingHexToRgba($danger,.12)?>!important}
+.picker-filters{display:block}
+.picker-bar{display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:12px;align-items:end}
+.picker-bar .field{margin:0}
+.picker-search-box{position:relative;display:block}
+.picker-search-box>svg{position:absolute;left:13px;top:50%;width:17px;height:17px;transform:translateY(-50%);color:<?=$surfaceMuted?>;pointer-events:none}
+body .picker-search-box input{padding-left:40px!important;width:100%}
+.student-picker.is-enhanced .picker-select{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;padding:0}
+.picker-results{display:grid;gap:6px;margin-top:12px;max-height:264px;overflow-y:auto;overscroll-behavior:contain;padding:2px;scrollbar-width:thin}
+.picker-results[hidden]{display:none!important}
+.picker-item{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 12px;border:1px solid <?=$lineSoft?>;border-radius:12px;background:<?=$effSurface?>;color:<?=$surfaceText?>;font:inherit;text-align:left;cursor:pointer;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.picker-item:hover{border-color:<?=brandingHexToRgba($accent,.45)?>;background:<?=$rowHover?>}
+.picker-item:focus-visible{outline:none;border-color:<?=$accent?>;box-shadow:0 0 0 3px <?=$accentRing?>}
+.picker-item[aria-selected="true"]{border-color:<?=$accent?>}
+.picker-avatar{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:<?=$badgeRedBg?>;color:<?=$onSurfaceAccent?>;font-size:13px;font-weight:700}
+.picker-item-name{flex:1;min-width:0;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.picker-chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;background:<?=$softBg?>;color:<?=$surfaceText?>;font-size:12px;font-weight:650;white-space:nowrap}
+.picker-chip[hidden]{display:none}
+.picker-count{margin:10px 2px 0;font-size:12px;color:<?=$surfaceMuted?>}
+.picker-count.is-error{color:<?=$badgeRedFg?>;font-weight:650}
+.student-picker:not(.is-enhanced) .picker-count{display:none}
+.picker-chosen{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;background:<?=$effSurface?>;border:1px solid <?=brandingHexToRgba($accent,.35)?>;box-shadow:0 1px 2px rgba(0,0,0,.04),0 0 0 3px <?=brandingHexToRgba($accent,.06)?>}
+.picker-chosen .picker-avatar{width:42px;height:42px;flex-basis:42px;font-size:16px}
+.picker-chosen-text small{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:<?=$surfaceMuted?>!important;font-weight:650}
+.picker-chosen-text strong{font-size:15px}
+.picker-chosen .button svg{width:14px;height:14px}
+@media(max-width:560px){.picker-bar{grid-template-columns:1fr}.picker-chosen{flex-wrap:wrap}.picker-chosen .button{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.picker-item{transition:none}}
+/* Botón de envío de invitación: cargando y enviado */
+.btn-spinner{width:15px;height:15px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:mad-spin .7s linear infinite}
+@keyframes mad-spin{to{transform:rotate(360deg)}}
+body .button.primary.is-done{background:<?=$success?>!important;border-color:<?=$success?>!important;opacity:1!important}
+body .button.primary.is-done,body .button.primary.is-done *{color:<?=$onSuccess?>!important}
+.button.is-done svg{width:16px;height:16px}
+@media(prefers-reduced-motion:reduce){.btn-spinner{animation-duration:2s}}
+@media(max-width:560px){
+ .picker-chosen{flex-wrap:wrap;row-gap:10px}
+ .picker-chosen-text{flex:1 1 calc(100% - 60px)}
+ .picker-chosen .picker-chip{margin-left:56px}
+ .picker-chosen .button{margin-left:auto}
+}
